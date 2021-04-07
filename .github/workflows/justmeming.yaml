@@ -1,0 +1,50 @@
+name: /r/JustMeming
+
+on:
+  schedule:
+    - cron: '30 * * * *'
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Dry run'
+        required: true
+        default: 'false'
+
+jobs:
+  justmeming:
+    name: Process new posts on /r/JustMeming
+    runs-on: windows-2019
+    env:
+      POWERSHELL_TELEMETRY_OPTOUT: '1'
+    steps:
+    - name: Checkout soda-hero/pxf
+      uses: actions/checkout@v2
+      with:
+        repository: soda-hero/pxf
+        path: pxf
+        token: ${{ secrets.PRIVATE_REPOS_PAT }}
+    - name: Checkout soda-hero/justmeming
+      uses: actions/checkout@v2
+      with:
+        repository: soda-hero/justmeming
+        path: justmeming
+        token: ${{ secrets.PRIVATE_REPOS_PAT }}
+    - name: Checkout soda-hero/justmeming-templates
+      uses: actions/checkout@v2
+      with:
+        repository: soda-hero/justmeming-templates
+        lfs: true
+        path: justmeming-templates
+        token: ${{ secrets.PRIVATE_REPOS_PAT }}
+    - name: Execute script
+      run: |
+        Set-Content '${{ secrets.PXF_CONFIG_JM }}' -Encoding UTF8 -LiteralPath $env:PXF_CONFIG_PATH;
+        & "${env:GITHUB_WORKSPACE}\justmeming\src\jm.ps1";
+        Remove-Item $env:PXF_CONFIG_PATH -ErrorAction SilentlyContinue
+      shell: pwsh
+      env:
+        PXF_MODULE_PATH: ${{ github.workspace }}\pxf\src\Pxf.psm1
+        PXF_CONFIG_PATH: ${{ github.workspace }}\config.json
+        MS_TEMPLATEROOT_PATH: ${{ github.workspace }}\justmeming-templates
+        MS_CHROME_PATH: 'C:\Program Files\Google\Chrome\Application\chrome.exe'
+        IS_DRY_RUN: ${{ github.event.inputs['dry-run'] }}

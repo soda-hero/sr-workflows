@@ -1,0 +1,41 @@
+name: /r/onewordeach
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Dry run'
+        required: true
+        default: 'false'
+
+jobs:
+  onewordeach:
+    name: Process new posts on /r/onewordeach
+    runs-on: ubuntu-latest
+    env:
+      POWERSHELL_TELEMETRY_OPTOUT: '1'
+    steps:
+    - name: Checkout soda-hero/pxf
+      uses: actions/checkout@v2
+      with:
+        repository: soda-hero/pxf
+        path: pxf
+        token: ${{ secrets.PRIVATE_REPOS_PAT }}
+    - name: Checkout soda-hero/onewordeach
+      uses: actions/checkout@v2
+      with:
+        repository: soda-hero/onewordeach
+        path: onewordeach
+        token: ${{ secrets.PRIVATE_REPOS_PAT }}
+    - name: Execute script
+      run: |
+        Set-Content '${{ secrets.PXF_CONFIG_OWE }}' -Encoding UTF8 -LiteralPath $env:PXF_CONFIG_PATH;
+        & "${env:GITHUB_WORKSPACE}/onewordeach/src/owe.ps1";
+        Remove-Item $env:PXF_CONFIG_PATH -ErrorAction SilentlyContinue
+      shell: pwsh
+      env:
+        PXF_MODULE_PATH: ${{ github.workspace }}/pxf/src/Pxf.psm1
+        PXF_CONFIG_PATH: ${{ github.workspace }}/config.json
+        IS_DRY_RUN: ${{ github.event.inputs['dry-run'] }}
