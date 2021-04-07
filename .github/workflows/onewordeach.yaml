@@ -1,8 +1,8 @@
 name: /r/onewordeach
 
 on:
-  schedule:
-  - cron: '10 * * * *'
+  repository_dispatch:
+    types: ['PAHourlyTrigger']
   workflow_dispatch:
     inputs:
       dry-run:

@@ -1,8 +1,8 @@
 name: /r/JustMeming
 
 on:
-  schedule:
-    - cron: '30 * * * *'
+  repository_dispatch:
+    types: ['PAHourlyTrigger']
   workflow_dispatch:
     inputs:
       dry-run:
