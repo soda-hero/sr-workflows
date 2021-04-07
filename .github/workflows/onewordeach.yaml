@@ -39,3 +39,11 @@ jobs:
         PXF_MODULE_PATH: ${{ github.workspace }}/pxf/src/Pxf.psm1
         PXF_CONFIG_PATH: ${{ github.workspace }}/config.json
         IS_DRY_RUN: ${{ github.event.inputs['dry-run'] }}
+    - name: Send a notification on failure
+      uses: jdcargile/ms-teams-notification@v1.3
+      if: ${{ !success() }}
+      with:
+        notification-summary: A recent workflow run did not finish successfully
+        github-token: ${{ github.token }}
+        ms-teams-webhook-uri: ${{ secrets.WORKFLOW_RESULT_NOTIFICATION_URL }}
+        timezone: Asia/Hong_Kong
