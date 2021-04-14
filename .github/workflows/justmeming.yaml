@@ -31,12 +31,19 @@ jobs:
         path: justmeming
         token: ${{ secrets.PRIVATE_REPOS_PAT }}
     - name: Checkout soda-hero/justmeming-templates
+      if: false
       uses: actions/checkout@v2
       with:
         repository: soda-hero/justmeming-templates
         lfs: true
         path: justmeming-templates
         token: ${{ secrets.PRIVATE_REPOS_PAT }}
+    - name: Checkout justmeming-templates from VSTS
+      run: |
+        cd '${{ github.workspace }}';
+        git clone --depth 1 '${{ secrets.JM_TEMPLATES_VSTS_REPO_URL }}' 'justmeming-templates';
+        cd 'justmeming-templates';
+        git lfs pull
     - name: Execute script
       run: |
         Set-Content '${{ secrets.PXF_CONFIG_JM }}' -Encoding UTF8 -LiteralPath $env:PXF_CONFIG_PATH;
