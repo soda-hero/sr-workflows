@@ -32,6 +32,7 @@ jobs:
         token: ${{ secrets.PRIVATE_REPOS_PAT }}
     - name: Execute script
       run: |
+        $ProgressPreference = 'SilentlyContinue';
         Set-Content '${{ secrets.PXF_CONFIG_OWE }}' -Encoding UTF8 -LiteralPath $env:PXF_CONFIG_PATH;
         & "${env:GITHUB_WORKSPACE}/onewordeach/src/owe.ps1";
         Remove-Item $env:PXF_CONFIG_PATH -ErrorAction SilentlyContinue

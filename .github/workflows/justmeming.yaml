@@ -46,6 +46,7 @@ jobs:
         git lfs pull
     - name: Execute script
       run: |
+        $ProgressPreference = 'SilentlyContinue';
         Set-Content '${{ secrets.PXF_CONFIG_JM }}' -Encoding UTF8 -LiteralPath $env:PXF_CONFIG_PATH;
         & "${env:GITHUB_WORKSPACE}\justmeming\src\jm.ps1";
         Remove-Item $env:PXF_CONFIG_PATH -ErrorAction SilentlyContinue
