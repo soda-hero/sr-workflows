@@ -22,7 +22,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: soda-hero/pxf
-        ref: OWE_210420
+        ref: OWE_210422
         path: pxf
         token: ${{ secrets.PRIVATE_REPOS_PAT }}
     - name: Checkout soda-hero/onewordeach
