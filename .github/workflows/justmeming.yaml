@@ -22,7 +22,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: soda-hero/pxf
-        ref: PXF_210530
+        ref: PXF_210530a
         path: pxf
         token: ${{ secrets.PRIVATE_REPOS_PAT }}
     - name: Checkout soda-hero/justmeming
