@@ -1,0 +1,42 @@
+name: Cleanup
+
+on:
+  repository_dispatch:
+    types: ['Scheduled run history cleanup']
+
+jobs:
+  cleanup:
+    name: Scheduled run history cleanup
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - name: Execute script
+      shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ secrets.github_token }}
+      run: |
+        $ProgressPreference = 'SilentlyContinue';
+        
+        $apiRoot = 'https://api.github.com';
+        $repoId = 'soda-hero/sr-workflows';
+        
+        $cutoff = (Get-Date -AsUtc).AddDays(-1);
+        $runListUrl = "${apiRoot}/repos/${repoId}/actions/runs?created=" +
+          [Uri]::EscapeDataString('<' + $cutoff.ToString("o"));
+        
+        do {
+          $runListResp = Invoke-RestMethod $runListUrl;
+          if ($runListResp.total_count -gt 0) {
+            $runListResp.workflow_runs |% {
+              $null = Invoke-RestMethod `
+                "${apiRoot}/repos/${repoId}/actions/runs/$($_.id)" `
+                -Method 'DELETE' `
+                -Headers @{'Authorization' = "bearer ${env:GITHUB_TOKEN}"} `
+                -Verbose `
+                -ErrorAction 'Continue'
+            }
+          }
+          else {
+            break
+          }
+        } while ($true)
