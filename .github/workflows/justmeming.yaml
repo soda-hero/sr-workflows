@@ -2,7 +2,7 @@ name: /r/JustMeming
 
 on:
   repository_dispatch:
-    types: ['PAHourlyTrigger']
+    types: ['Scheduled run']
   workflow_dispatch:
     inputs:
       dry-run:
