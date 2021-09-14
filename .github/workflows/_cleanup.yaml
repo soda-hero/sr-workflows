@@ -33,6 +33,7 @@ jobs:
                 -Method 'DELETE' `
                 -Headers @{'Authorization' = "bearer ${env:GITHUB_TOKEN}"} `
                 -Verbose `
+                -SkipHttpErrorCheck `
                 -ErrorAction 'Continue'
             }
           }
