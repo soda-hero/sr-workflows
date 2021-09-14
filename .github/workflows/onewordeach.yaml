@@ -29,7 +29,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: soda-hero/onewordeach
-        ref: OWE_210529a
+        ref: OWE_210915
         path: onewordeach
         token: ${{ secrets.PRIVATE_REPOS_PAT }}
     - name: Execute script
